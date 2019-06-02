@@ -46,7 +46,18 @@ public class AnalyzerChainAutoConfiguration {
 
   @PostConstruct
   void init() {
-    // load all analyzers
+    // TODO: load all analyzers
+
+    // sort analyzes by ordinal. can be configured in property file
+    analyzerChain.sort((a1, a2) -> {
+      if (a1.getOrdinal() < a2.getOrdinal()) {
+        return -1;
+      } else if (a1.getOrdinal() > a2.getOrdinal()) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
   }
 
   @Scheduled(initialDelay = 10000, fixedDelay = 10000)
