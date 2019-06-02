@@ -9,11 +9,30 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
   <artifactId>inputs</artifactId>
-  <version>${project.parent.version}</version>
   <name>inputs</name>
   <description>Inputs for phisherman, extensible open source phishing incident response automation</description>
 
   <dependencies>
-
+    <dependency>
+      <groupId>de.maindefense.phisherman</groupId>
+      <artifactId>common</artifactId>
+      <version>${phisherman.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-mail</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-mail</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-logging</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-quartz</artifactId>
+    </dependency>
   </dependencies>
 </project>
