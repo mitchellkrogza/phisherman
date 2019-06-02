@@ -10,12 +10,13 @@
   </parent>
   <groupId>de.maindefense.phisherman</groupId>
   <artifactId>phisherman-parent</artifactId>
-  <version>${phisherman.version}</version>
+  <version>1.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>phisherman-parent</name>
   <description>Demo project for Spring Boot</description>
 
   <modules>
+    <module>common</module>
     <module>inputs</module>
     <module>analyzers</module>
     <module>outputs</module>
@@ -23,7 +24,6 @@
   </modules>
 
   <properties>
-    <phisherman.version>1.0.0-SNAPSHOT</phisherman.version>
     <java.version>11</java.version>
   </properties>
 
@@ -49,12 +49,33 @@
     </dependency>
   </dependencies>
 
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>de.maindefense.phisherman</groupId>
+        <artifactId>common</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>de.maindefense.phisherman</groupId>
+        <artifactId>inputs</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>de.maindefense.phisherman</groupId>
+        <artifactId>analyzers</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>de.maindefense.phisherman</groupId>
+        <artifactId>outputs</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <build>
     <plugins>
-      <plugin>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-maven-plugin</artifactId>
-      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>

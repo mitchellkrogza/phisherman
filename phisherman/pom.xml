@@ -5,12 +5,10 @@
   <parent>
     <groupId>de.maindefense.phisherman</groupId>
     <artifactId>phisherman-parent</artifactId>
-	<version>${phisherman.version}</version>
+    <version>1.0.0-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
-  <groupId>de.maindefense.phisherman</groupId>
   <artifactId>phisherman</artifactId>
-  <version>${project.parent.version}</version>
   <name>phisherman</name>
   <description>Extensible open source phishing incident response automation</description>
 
@@ -19,6 +17,11 @@
   </properties>
 
   <dependencies>
+    <dependency>
+      <groupId>de.maindefense.phisherman</groupId>
+      <artifactId>inputs</artifactId>
+      <version>${project.version}</version>
+    </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -41,7 +44,7 @@
       <artifactId>h2</artifactId>
       <scope>runtime</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-test</artifactId>
@@ -49,4 +52,15 @@
     </dependency>
   </dependencies>
 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+          <executable>true</executable>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>

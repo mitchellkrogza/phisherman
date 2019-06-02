@@ -1,7 +1,7 @@
 # add java stuff
 /target/
-!.mvn/wrapper/maven-wrapper.jar
-**/.mvn/wrapper/maven-wrapper.jar
+/**/**/application-local.yml
+/**/.checkstyle
 
 ### STS ###
 .apt_generated

@@ -1,46 +1,25 @@
 package de.maindefense.phisherman.inputs.imap;
 
 import com.sun.mail.imap.IMAPFolder;
-import com.sun.mail.imap.IMAPNestedMessage;
 import de.maindefense.phisherman.common.FileSystemDataProvider;
 import de.maindefense.phisherman.inputs.Input;
 import de.maindefense.phisherman.inputs.exception.InputException;
-import de.maindefense.phisherman.inputs.imap.ImapInputProperties.ImapProperties;
-import java.io.BufferedWriter;
+import de.maindefense.phisherman.inputs.imap.config.ImapServerProperties;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import javax.mail.Address;
-import javax.mail.BodyPart;
 import javax.mail.Folder;
-import javax.mail.Header;
 import javax.mail.Message;
 import javax.mail.MessagingException;
-import javax.mail.Multipart;
-import javax.mail.NoSuchProviderException;
-import javax.mail.Part;
 import javax.mail.Session;
 import javax.mail.Store;
 import javax.mail.Flags.Flag;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 
 public class ImapMailInput implements Input {
 
@@ -52,19 +31,18 @@ public class ImapMailInput implements Input {
   private static final String MAIL_STORE_PROTOCOL_IMAPS = "imaps";
   private static final String INPUT_NAME_PREFIX = "imap";
 
-  private ImapProperties imapProperties;
+  private ImapServerProperties imapProperties;
   private FileSystemDataProvider fileSystemDataProvider;
 
 
 
-  public ImapMailInput(ImapProperties imapProperties,
+  public ImapMailInput(ImapServerProperties imapProperties,
       FileSystemDataProvider fileSystemDataProvider) {
     this.imapProperties = imapProperties;
     this.fileSystemDataProvider = fileSystemDataProvider;
   }
 
 
-  @Scheduled(fixedDelay = 60000)
   @Override
   public void fetchInput() {
     try (Store store = getImapStore();
@@ -73,6 +51,7 @@ public class ImapMailInput implements Input {
       if (!folder.isOpen()) {
         folder.open(Folder.READ_WRITE);
       }
+      // get the messages and save them to the local data directory
       Message[] messages = folder.getMessages();
       for (int i = 0; i < messages.length; i++) {
         Message msg = messages[i];
@@ -90,17 +69,32 @@ public class ImapMailInput implements Input {
   }
 
   protected void writeMessageToLocalFileSystem(Message message) throws InputException {
-    try (OutputStream os = Files.newOutputStream(getPathToWriteMessage())) {
+    Path pathToWriteMessage = getPathToWriteMessageTo();
+    try {
+      Files.createDirectories(pathToWriteMessage.getParent());
+      Files.createFile(pathToWriteMessage);
+    } catch (IOException e) {
+      throw new InputException("Error storing message to local file system", e);
+    }
+
+    try (OutputStream os = Files.newOutputStream(pathToWriteMessage)) {
       message.writeTo(os);
     } catch (Exception e) {
       throw new InputException("Error storing message to local file system", e);
     }
   }
 
-  protected Path getPathToWriteMessage() {
+  /**
+   * Gets the path to write message to.
+   * 
+   * File name is randomly generated. Subject/Sender as file name would be more human-readable, but
+   * increases the risk of messing around with file name vulnerabilities.
+   *
+   * @return the path to write message to
+   */
+  protected Path getPathToWriteMessageTo() {
     return Paths.get(fileSystemDataProvider.getDataDir().toString(), getInputName(),
         UUID.randomUUID().toString());
-
   }
 
   protected Store getImapStore() throws MessagingException {
@@ -114,8 +108,6 @@ public class ImapMailInput implements Input {
         imapProperties.getUsername(), imapProperties.getPassword());
     return store;
   }
-
-
 
   @Override
   public String getInputName() {

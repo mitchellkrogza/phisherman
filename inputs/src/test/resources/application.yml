@@ -1,0 +1,7 @@
+input.imap:
+  servers:
+    - hostname: foo.bar
+      port: 123
+      username: user1
+      password: pw1
+      folder: INBOX/abc

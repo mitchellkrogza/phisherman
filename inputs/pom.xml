@@ -5,7 +5,7 @@
   <parent>
     <groupId>de.maindefense.phisherman</groupId>
     <artifactId>phisherman-parent</artifactId>
-    <version>${phisherman.version}</version>
+    <version>1.0.0-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <artifactId>inputs</artifactId>
@@ -16,7 +16,6 @@
     <dependency>
       <groupId>de.maindefense.phisherman</groupId>
       <artifactId>common</artifactId>
-      <version>${phisherman.version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>

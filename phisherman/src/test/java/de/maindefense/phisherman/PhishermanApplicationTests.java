@@ -1,4 +1,4 @@
-package de.maindefense.phisherman.phisherman;
+package de.maindefense.phisherman;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -1,38 +1,69 @@
 package de.maindefense.phisherman.inputs.imap;
 
-import de.maindefense.phisherman.inputs.imap.ImapInputProperties.ImapProperties;
+import de.maindefense.phisherman.common.FileSystemDataProvider;
+import de.maindefense.phisherman.inputs.imap.config.ImapServerProperties;
+import java.util.ArrayList;
+import java.util.List;
 import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.util.CollectionUtils;
 
 
 @Configuration
-@ConditionalOnProperty(name = "input.imap")
+@ConditionalOnProperty(name = "input.imap.servers")
 @EnableScheduling
 public class ImapInputAutoConfíguration {
 
   private static final Logger LOG = LoggerFactory.getLogger(ImapInputAutoConfíguration.class);
 
+  private final List<ImapMailInput> imapMailInputs = new ArrayList<>();
+
   @Autowired
-  private ImapInputProperties imapInputProperties;
+  private Environment env;
+
+  @Bean
+  @ConfigurationProperties(prefix = "input.imap")
+  ImapInputProperties getImapInputProperties() {
+    return new ImapInputProperties();
+  }
+
+  @Bean
+  FileSystemDataProvider getFileSystemDataProvider() {
+    return new FileSystemDataProvider(env);
+  }
+
+  @Scheduled(fixedDelay = 60000)
+  void fetchMailsFromImapInputs() {
+    imapMailInputs.forEach(i -> {
+      i.fetchInput();
+    });
+  }
 
   @PostConstruct
   void init() {
-    LOG.debug("Start initializing imap inputs... Total number of imap inputs to be initialized: "
-        + imapInputProperties.getServers().size());
-    imapInputProperties.getServers().forEach(s -> {
-      LOG.debug("Initializing imap input: " + s.toString());
-
-      
-
-    });
+    ImapInputProperties imapInputProperties = getImapInputProperties();
+    if (CollectionUtils.isEmpty(imapInputProperties.getServers())) {
+      LOG.info("Total number of imap inputs to be initialized: 0");
+    } else {
+      LOG.info("Start initializing imap inputs... Total number of imap inputs to be initialized: "
+          + imapInputProperties.getServers().size());
+      imapInputProperties.getServers().forEach(s -> {
+        LOG.info("Initializing imap input: " + s.toString());
+        initializeImapInput(s);
+      });
+    }
   }
-  
-  void initializeImapInput(ImapProperties imapProperties) {
-    
+
+  void initializeImapInput(ImapServerProperties imapProperties) {
+    imapMailInputs.add(new ImapMailInput(imapProperties, getFileSystemDataProvider()));
   }
 }

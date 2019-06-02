@@ -5,15 +5,17 @@
   <parent>
     <groupId>de.maindefense.phisherman</groupId>
     <artifactId>phisherman-parent</artifactId>
-    <version>${phisherman.version}</version>
+    <version>1.0.0-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <artifactId>analyzers</artifactId>
-  <version>${project.parent.version}</version>
   <name>analyzers</name>
   <description>Analyzers for phisherman, extensible open source phishing incident response automation</description>
 
   <dependencies>
-    
+    <dependency>
+      <groupId>de.maindefense.phisherman</groupId>
+      <artifactId>inputs</artifactId>
+    </dependency>
   </dependencies>
 </project>
