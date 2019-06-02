@@ -2,6 +2,7 @@
 /target/
 /**/**/application-local.yml
 /**/.checkstyle
+/phisherman/data
 
 ### STS ###
 .apt_generated
