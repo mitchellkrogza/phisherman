@@ -22,6 +22,10 @@
       <artifactId>inputs</artifactId>
     </dependency>
     <dependency>
+      <groupId>de.maindefense.phisherman</groupId>
+      <artifactId>analyzers</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-data-jpa</artifactId>
     </dependency>

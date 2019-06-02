@@ -1,6 +1,5 @@
 package de.maindefense.phisherman.inputs.imap;
 
-import com.sun.mail.imap.IMAPFolder;
 import de.maindefense.phisherman.common.FileSystemDataProvider;
 import de.maindefense.phisherman.inputs.Input;
 import de.maindefense.phisherman.inputs.exception.InputException;
@@ -46,8 +45,9 @@ public class ImapMailInput implements Input {
   @Override
   public void fetchInput() {
     try (Store store = getImapStore();
-        IMAPFolder folder = (IMAPFolder) store.getFolder(imapProperties.getFolder())) {
+        Folder folder = store.getFolder(imapProperties.getFolder())) {
       // open the store, so we can write to it (set messages deleted after fetching)
+
       if (!folder.isOpen()) {
         folder.open(Folder.READ_WRITE);
       }

@@ -21,32 +21,27 @@ import org.springframework.util.CollectionUtils;
 
 
 @Configuration
-@ConditionalOnProperty(name = "input.fs.paths")
+@ConditionalOnProperty(name = "input.fs.paths[0]")
 @EnableScheduling
 public class LocalFileSystemInputAutoConfiguration {
 
-  private static final Logger LOG = LoggerFactory.getLogger(LocalFileSystemInputAutoConfiguration.class);
+  private static final Logger LOG =
+      LoggerFactory.getLogger(LocalFileSystemInputAutoConfiguration.class);
 
-  private final List<LocalFileSystemMailInput> imapMailInputs = new ArrayList<>();
+  private final List<LocalFileSystemMailInput> localFileSystemMailInputs = new ArrayList<>();
 
   @Autowired
-  private Environment env;
-  
-  @Value("${input.fs.path}")
+  private FileSystemDataProvider fileSystemDataProvider;
+
   @Bean
   @ConfigurationProperties(prefix = "input.fs")
   LocalFimeSystemInputProperties getInputProperties() {
     return new LocalFimeSystemInputProperties();
   }
 
-  @Bean
-  FileSystemDataProvider getFileSystemDataProvider() {
-    return new FileSystemDataProvider(env);
-  }
-
   @Scheduled(fixedDelay = 60000)
-  void fetchMailsFromImapInputs() {
-    imapMailInputs.forEach(i -> {
+  void fetchMailsFromLocalFileSystemInputs() {
+    localFileSystemMailInputs.forEach(i -> {
       i.fetchInput();
     });
   }
@@ -57,8 +52,9 @@ public class LocalFileSystemInputAutoConfiguration {
     if (CollectionUtils.isEmpty(imapInputProperties.getPaths())) {
       LOG.info("Total number of local file system inputs to be initialized: 0");
     } else {
-      LOG.info("Start initializing local file system inputs... Total number of imap inputs to be initialized: "
-          + imapInputProperties.getPaths().size());
+      LOG.info(
+          "Start initializing local file system inputs... Total number of imap inputs to be initialized: "
+              + imapInputProperties.getPaths().size());
       imapInputProperties.getPaths().forEach(s -> {
         LOG.info("Initializing local file system input: " + s.toString());
         initializeLocalFileSystemInput(Paths.get(s));
@@ -67,6 +63,7 @@ public class LocalFileSystemInputAutoConfiguration {
   }
 
   void initializeLocalFileSystemInput(Path imapProperties) {
-    imapMailInputs.add(new LocalFileSystemMailInput(imapProperties, getFileSystemDataProvider()));
+    localFileSystemMailInputs
+        .add(new LocalFileSystemMailInput(imapProperties, fileSystemDataProvider));
   }
 }

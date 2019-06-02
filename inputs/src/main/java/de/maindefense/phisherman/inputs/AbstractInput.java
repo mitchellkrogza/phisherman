@@ -40,7 +40,7 @@ public abstract class AbstractInput implements Input {
    * @return the path to write message to
    */
   protected Path getPathToWriteMessageTo(FileSystemDataProvider fileSystemDataProvider) {
-    return Paths.get(fileSystemDataProvider.getDataDir().toString(), getInputName(),
+    return Paths.get(getInputDirectoryPath(fileSystemDataProvider).toString(),
         UUID.randomUUID().toString());
   }
 

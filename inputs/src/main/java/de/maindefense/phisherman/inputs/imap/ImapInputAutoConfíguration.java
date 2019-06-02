@@ -12,14 +12,13 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.util.CollectionUtils;
 
 
 @Configuration
-@ConditionalOnProperty(name = "input.imap.servers")
+@ConditionalOnProperty(name = "input.imap.servers[0].hostname")
 @EnableScheduling
 public class ImapInputAutoConfíguration {
 
@@ -28,17 +27,12 @@ public class ImapInputAutoConfíguration {
   private final List<ImapMailInput> imapMailInputs = new ArrayList<>();
 
   @Autowired
-  private Environment env;
+  private FileSystemDataProvider fileSystemDataProvider;
 
   @Bean
   @ConfigurationProperties(prefix = "input.imap")
   ImapInputProperties getImapInputProperties() {
     return new ImapInputProperties();
-  }
-
-  @Bean
-  FileSystemDataProvider getFileSystemDataProvider() {
-    return new FileSystemDataProvider(env);
   }
 
   @Scheduled(fixedDelay = 60000)
@@ -64,6 +58,6 @@ public class ImapInputAutoConfíguration {
   }
 
   void initializeImapInput(ImapServerProperties imapProperties) {
-    imapMailInputs.add(new ImapMailInput(imapProperties, getFileSystemDataProvider()));
+    imapMailInputs.add(new ImapMailInput(imapProperties, fileSystemDataProvider));
   }
 }

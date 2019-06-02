@@ -8,6 +8,9 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Properties;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
+import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.internet.MimeMessage;
@@ -31,15 +34,26 @@ public class LocalFileSystemMailInput extends AbstractInput {
 
   @Override
   public void fetchInput() {
-    try {
-      Files.walk(sourcePath).filter(p -> !Files.isDirectory(p)).forEach(p -> {
-        try {
-          MimeMessage msg = getMessageFromLocalFileSystemPath(p);
-          writeMessageToLocalFileSystem(msg, fileSystemDataProvider);
-          Files.deleteIfExists(p);
-        } catch (InputException | IOException e) {
-          LOG.error("Message could not be written. Will be retried on next fetch attempt.", e);
-        }
+    walkRecursiveStartingFrom(p -> {
+      try {
+        Message msg = getMessageFromLocalFileSystemPath(p);
+        writeMessageToLocalFileSystem(msg, fileSystemDataProvider);
+        Files.deleteIfExists(p);
+      } catch (InputException | IOException e) {
+        LOG.error("Message could not be written. Will be retried on next fetch attempt.", e);
+      }
+    });
+  }
+
+  @Override
+  public String getInputName() {
+    return INPUT_NAME_PREFIX + "_" + sourcePath.hashCode();
+  }
+
+  public void walkRecursiveStartingFrom(Consumer<Path> function) {
+    try (Stream<Path> stream = Files.walk(sourcePath)) {
+      stream.filter(p -> !Files.isDirectory(p)).forEach(p -> {
+        function.accept(p);
       });
     } catch (IOException e) {
       LOG.error(
@@ -48,12 +62,7 @@ public class LocalFileSystemMailInput extends AbstractInput {
     }
   }
 
-  @Override
-  public String getInputName() {
-    return INPUT_NAME_PREFIX + "_" + sourcePath.hashCode();
-  }
-
-  public MimeMessage getMessageFromLocalFileSystemPath(Path path) throws InputException {
+  public Message getMessageFromLocalFileSystemPath(Path path) throws InputException {
     Session session = Session.getDefaultInstance(new Properties());
     try (InputStream is = Files.newInputStream(path)) {
       return new MimeMessage(session, is);
