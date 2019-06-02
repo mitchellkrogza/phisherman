@@ -23,9 +23,9 @@ import org.springframework.util.CollectionUtils;
 @Configuration
 @ConditionalOnProperty(name = "input.fs.paths")
 @EnableScheduling
-public class LocalFileSystemInputAutoConfíguration {
+public class LocalFileSystemInputAutoConfiguration {
 
-  private static final Logger LOG = LoggerFactory.getLogger(LocalFileSystemInputAutoConfíguration.class);
+  private static final Logger LOG = LoggerFactory.getLogger(LocalFileSystemInputAutoConfiguration.class);
 
   private final List<LocalFileSystemMailInput> imapMailInputs = new ArrayList<>();
 
