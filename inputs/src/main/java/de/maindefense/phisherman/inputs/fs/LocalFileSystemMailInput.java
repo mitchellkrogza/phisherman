@@ -2,11 +2,13 @@ package de.maindefense.phisherman.inputs.fs;
 
 import de.maindefense.phisherman.common.FileSystemDataProvider;
 import de.maindefense.phisherman.inputs.AbstractInput;
+import de.maindefense.phisherman.inputs.exception.InputException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Properties;
+import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.internet.MimeMessage;
 import org.slf4j.Logger;
@@ -22,33 +24,42 @@ public class LocalFileSystemMailInput extends AbstractInput {
 
   private Path sourcePath;
 
-  public LocalFileSystemMailInput(Path sourcePath,
-      FileSystemDataProvider fileSystemDataProvider) {
+  public LocalFileSystemMailInput(Path sourcePath, FileSystemDataProvider fileSystemDataProvider) {
     this.sourcePath = sourcePath;
     this.fileSystemDataProvider = fileSystemDataProvider;
   }
 
   @Override
   public void fetchInput() {
-    Session session = Session.getDefaultInstance(new Properties());
     try {
-      Files.list(sourcePath).filter(p->!Files.isDirectory(p)).forEach(p->{
-        try (InputStream is = Files.newInputStream(p)){
-          MimeMessage msg = new MimeMessage(session, is);
+      Files.walk(sourcePath).filter(p -> !Files.isDirectory(p)).forEach(p -> {
+        try {
+          MimeMessage msg = getMessageFromLocalFileSystemPath(p);
           writeMessageToLocalFileSystem(msg, fileSystemDataProvider);
           Files.deleteIfExists(p);
-        } catch (Exception e) {
+        } catch (InputException | IOException e) {
           LOG.error("Message could not be written. Will be retried on next fetch attempt.", e);
         }
       });
     } catch (IOException e) {
-      LOG.error("Error fetching mesages from local file system. Will be retried on next fetch attempt.", e);
+      LOG.error(
+          "Error fetching mesages from local file system. Will be retried on next fetch attempt.",
+          e);
     }
   }
 
   @Override
   public String getInputName() {
     return INPUT_NAME_PREFIX + "_" + sourcePath.hashCode();
+  }
+
+  public MimeMessage getMessageFromLocalFileSystemPath(Path path) throws InputException {
+    Session session = Session.getDefaultInstance(new Properties());
+    try (InputStream is = Files.newInputStream(path)) {
+      return new MimeMessage(session, is);
+    } catch (IOException | MessagingException e) {
+      throw new InputException("Error getting message from local file system path", e);
+    }
   }
 
 }
