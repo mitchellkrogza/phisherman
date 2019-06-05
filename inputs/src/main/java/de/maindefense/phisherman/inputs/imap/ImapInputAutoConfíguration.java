@@ -1,6 +1,6 @@
 package de.maindefense.phisherman.inputs.imap;
 
-import de.maindefense.phisherman.common.FileSystemDataProvider;
+import de.maindefense.phisherman.common.QueueProvider;
 import de.maindefense.phisherman.inputs.imap.ImapInputProperties.ImapServerProperties;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +27,7 @@ public class ImapInputAutoConfíguration {
   private final List<ImapMailInput> imapMailInputs = new ArrayList<>();
 
   @Autowired
-  private FileSystemDataProvider fileSystemDataProvider;
+  private QueueProvider fileSystemDataProvider;
 
   @Bean
   @ConfigurationProperties(prefix = "input.imap")

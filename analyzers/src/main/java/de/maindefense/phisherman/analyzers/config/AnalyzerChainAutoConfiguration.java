@@ -2,7 +2,7 @@ package de.maindefense.phisherman.analyzers.config;
 
 import de.maindefense.phisherman.analyzers.Analyzer;
 import de.maindefense.phisherman.analyzers.AttachedMessageProvider;
-import de.maindefense.phisherman.common.FileSystemDataProvider;
+import de.maindefense.phisherman.common.QueueProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ public class AnalyzerChainAutoConfiguration {
   private AttachedMessageProvider attachedMessageProvider;
 
   @Autowired
-  private FileSystemDataProvider fileSystemDataProvider;
+  private QueueProvider fileSystemDataProvider;
 
   @Autowired
   private ApplicationContext ctx;

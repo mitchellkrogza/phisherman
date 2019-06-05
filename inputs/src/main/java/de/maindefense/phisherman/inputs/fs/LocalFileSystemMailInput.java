@@ -1,6 +1,6 @@
 package de.maindefense.phisherman.inputs.fs;
 
-import de.maindefense.phisherman.common.FileSystemDataProvider;
+import de.maindefense.phisherman.common.QueueProvider;
 import de.maindefense.phisherman.inputs.AbstractInput;
 import de.maindefense.phisherman.inputs.exception.InputException;
 import java.io.IOException;
@@ -23,13 +23,13 @@ public class LocalFileSystemMailInput extends AbstractInput {
 
   private static final String INPUT_NAME_PREFIX = "fs";
 
-  private FileSystemDataProvider fileSystemDataProvider;
+  private QueueProvider queueProvider;
 
   private Path sourcePath;
 
-  public LocalFileSystemMailInput(Path sourcePath, FileSystemDataProvider fileSystemDataProvider) {
+  public LocalFileSystemMailInput(Path sourcePath, QueueProvider fileSystemDataProvider) {
     this.sourcePath = sourcePath;
-    this.fileSystemDataProvider = fileSystemDataProvider;
+    this.queueProvider = fileSystemDataProvider;
   }
 
   @Override
@@ -37,7 +37,7 @@ public class LocalFileSystemMailInput extends AbstractInput {
     walkRecursiveStartingFrom(p -> {
       try {
         Message msg = getMessageFromLocalFileSystemPath(p);
-        writeMessageToLocalFileSystem(msg, fileSystemDataProvider);
+        addToQueue(msg, queueProvider);
         Files.deleteIfExists(p);
       } catch (InputException | IOException e) {
         LOG.error("Message could not be written. Will be retried on next fetch attempt.", e);
@@ -50,7 +50,7 @@ public class LocalFileSystemMailInput extends AbstractInput {
     return INPUT_NAME_PREFIX + "_" + sourcePath.hashCode();
   }
 
-  public void walkRecursiveStartingFrom(Consumer<Path> function) {
+  protected void walkRecursiveStartingFrom(Consumer<Path> function) {
     try (Stream<Path> stream = Files.walk(sourcePath)) {
       stream.filter(p -> !Files.isDirectory(p)).forEach(p -> {
         function.accept(p);

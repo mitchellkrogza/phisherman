@@ -1,6 +1,6 @@
 package de.maindefense.phisherman.inputs.fs;
 
-import de.maindefense.phisherman.common.FileSystemDataProvider;
+import de.maindefense.phisherman.common.QueueProvider;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -29,7 +29,7 @@ public class LocalFileSystemInputAutoConfiguration {
   private final List<LocalFileSystemMailInput> localFileSystemMailInputs = new ArrayList<>();
 
   @Autowired
-  private FileSystemDataProvider fileSystemDataProvider;
+  private QueueProvider queueProvider;
 
   @Bean
   @ConfigurationProperties(prefix = "input.fs")
@@ -61,7 +61,6 @@ public class LocalFileSystemInputAutoConfiguration {
   }
 
   void initializeLocalFileSystemInput(Path imapProperties) {
-    localFileSystemMailInputs
-        .add(new LocalFileSystemMailInput(imapProperties, fileSystemDataProvider));
+    localFileSystemMailInputs.add(new LocalFileSystemMailInput(imapProperties, queueProvider));
   }
 }

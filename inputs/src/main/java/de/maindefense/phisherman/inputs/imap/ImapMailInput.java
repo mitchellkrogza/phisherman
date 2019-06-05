@@ -1,16 +1,10 @@
 package de.maindefense.phisherman.inputs.imap;
 
-import de.maindefense.phisherman.common.FileSystemDataProvider;
-import de.maindefense.phisherman.inputs.Input;
-import de.maindefense.phisherman.inputs.exception.InputException;
+import de.maindefense.phisherman.common.QueueProvider;
+import de.maindefense.phisherman.inputs.AbstractInput;
 import de.maindefense.phisherman.inputs.imap.ImapInputProperties.ImapServerProperties;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Properties;
-import java.util.UUID;
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -20,7 +14,7 @@ import javax.mail.Flags.Flag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ImapMailInput implements Input {
+public class ImapMailInput extends AbstractInput {
 
   private static final Logger LOG = LoggerFactory.getLogger(ImapMailInput.class);
   /**
@@ -31,14 +25,13 @@ public class ImapMailInput implements Input {
   private static final String INPUT_NAME_PREFIX = "imap";
 
   private ImapServerProperties imapProperties;
-  private FileSystemDataProvider fileSystemDataProvider;
+  private QueueProvider queueProvider;
 
 
 
-  public ImapMailInput(ImapServerProperties imapProperties,
-      FileSystemDataProvider fileSystemDataProvider) {
+  public ImapMailInput(ImapServerProperties imapProperties, QueueProvider queueProvider) {
     this.imapProperties = imapProperties;
-    this.fileSystemDataProvider = fileSystemDataProvider;
+    this.queueProvider = queueProvider;
   }
 
 
@@ -56,45 +49,16 @@ public class ImapMailInput implements Input {
       for (int i = 0; i < messages.length; i++) {
         Message msg = messages[i];
         try {
-          writeMessageToLocalFileSystem(msg);
+          addToQueue(msg, queueProvider);
           // set deleted, only if message has been written to local file system successfully
           msg.setFlag(Flag.DELETED, true);
-        } catch (InputException e) {
+        } catch (IOException e) {
           LOG.error("Message could not be written. Will be retried on next fetch attempt.", e);
         }
       }
     } catch (MessagingException e) {
       LOG.error("Error fetching messages from server.", e);
     }
-  }
-
-  protected void writeMessageToLocalFileSystem(Message message) throws InputException {
-    Path pathToWriteMessage = getPathToWriteMessageTo();
-    try {
-      Files.createDirectories(pathToWriteMessage.getParent());
-      Files.createFile(pathToWriteMessage);
-    } catch (IOException e) {
-      throw new InputException("Error storing message to local file system", e);
-    }
-
-    try (OutputStream os = Files.newOutputStream(pathToWriteMessage)) {
-      message.writeTo(os);
-    } catch (Exception e) {
-      throw new InputException("Error storing message to local file system", e);
-    }
-  }
-
-  /**
-   * Gets the path to write message to.
-   * 
-   * File name is randomly generated. Subject/Sender as file name would be more human-readable, but
-   * increases the risk of messing around with file name vulnerabilities.
-   *
-   * @return the path to write message to
-   */
-  protected Path getPathToWriteMessageTo() {
-    return Paths.get(getInputDirectoryPath(fileSystemDataProvider).toString(),
-        UUID.randomUUID().toString());
   }
 
   protected Store getImapStore() throws MessagingException {
