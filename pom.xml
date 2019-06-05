@@ -25,6 +25,10 @@
 
   <properties>
     <java.version>11</java.version>
+    <simple-java-mail.version>5.1.7</simple-java-mail.version>
+    <jacoco-maven-plugin.version>0.8.3</jacoco-maven-plugin.version>
+    <maven-checkstyle-plugin.version>3.0.0</maven-checkstyle-plugin.version>
+    <poi.version>4.1.0</poi.version>
   </properties>
 
   <dependencies>
@@ -71,6 +75,21 @@
         <artifactId>outputs</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.simplejavamail</groupId>
+        <artifactId>simple-java-mail</artifactId>
+        <version>${simple-java-mail.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.poi</groupId>
+        <artifactId>poi</artifactId>
+        <version>${poi.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.poi</groupId>
+        <artifactId>poi-scratchpad</artifactId>
+        <version>${poi.version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -79,7 +98,7 @@
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.8.3</version>
+        <version>${jacoco-maven-plugin.version}</version>
         <executions>
           <execution>
             <id>prepare-agent</id>
@@ -98,7 +117,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>3.0.0</version>
+        <version>${maven-checkstyle-plugin.version}</version>
         <executions>
           <execution>
             <id>validate</id>

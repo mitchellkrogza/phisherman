@@ -8,7 +8,7 @@ public interface Analyzer {
 
   long analyze(Message message);
 
-  int getOrdinal();
+  int getOrder();
 
   long getWeight();
 

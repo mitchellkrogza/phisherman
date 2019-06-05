@@ -3,7 +3,7 @@ package de.maindefense.phisherman.inputs.imap;
 import de.maindefense.phisherman.common.FileSystemDataProvider;
 import de.maindefense.phisherman.inputs.Input;
 import de.maindefense.phisherman.inputs.exception.InputException;
-import de.maindefense.phisherman.inputs.imap.config.ImapServerProperties;
+import de.maindefense.phisherman.inputs.imap.ImapInputProperties.ImapServerProperties;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
@@ -93,7 +93,7 @@ public class ImapMailInput implements Input {
    * @return the path to write message to
    */
   protected Path getPathToWriteMessageTo() {
-    return Paths.get(fileSystemDataProvider.getDataDir().toString(), getInputName(),
+    return Paths.get(getInputDirectoryPath(fileSystemDataProvider).toString(),
         UUID.randomUUID().toString());
   }
 

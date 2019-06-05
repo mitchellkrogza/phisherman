@@ -1,7 +1,7 @@
 package de.maindefense.phisherman.inputs.imap;
 
 import de.maindefense.phisherman.common.FileSystemDataProvider;
-import de.maindefense.phisherman.inputs.imap.config.ImapServerProperties;
+import de.maindefense.phisherman.inputs.imap.ImapInputProperties.ImapServerProperties;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
