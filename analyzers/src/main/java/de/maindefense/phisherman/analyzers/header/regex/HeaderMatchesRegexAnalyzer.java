@@ -1,7 +1,7 @@
-package de.maindefense.phisherman.analyzers.header;
+package de.maindefense.phisherman.analyzers.header.regex;
 
 import de.maindefense.phisherman.analyzers.Analyzer;
-import de.maindefense.phisherman.analyzers.header.HeaderMatchesRegexAnalyzerProperties.HeaderRegexProperties;
+import de.maindefense.phisherman.analyzers.header.regex.HeaderMatchesRegexAnalyzerProperties.HeaderRegexProperties;
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

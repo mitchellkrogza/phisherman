@@ -1,4 +1,4 @@
-package de.maindefense.phisherman.analyzers.header;
+package de.maindefense.phisherman.analyzers.header.regex;
 
 import java.util.ArrayList;
 import java.util.List;

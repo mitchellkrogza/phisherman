@@ -1,11 +1,9 @@
 package de.maindefense.phisherman.analyzers;
 
-import com.sun.mail.imap.IMAPNestedMessage;
 import com.sun.mail.util.BASE64DecoderStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import javax.mail.BodyPart;
@@ -19,7 +17,6 @@ import org.simplejavamail.converter.EmailConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 @Component
 public class AttachedMessageProvider {
@@ -56,7 +53,6 @@ public class AttachedMessageProvider {
     }
     return attachedMessages;
   }
-
 
   Message getOutlookMessage(InputStream is) {
     return EmailConverter.outlookMsgToMimeMessage(is);
