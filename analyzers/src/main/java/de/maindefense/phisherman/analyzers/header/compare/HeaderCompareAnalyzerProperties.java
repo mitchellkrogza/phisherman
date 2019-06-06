@@ -1,5 +1,6 @@
 package de.maindefense.phisherman.analyzers.header.compare;
 
+import de.maindefense.phisherman.analyzers.config.AnalyzerProperties;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,12 +16,10 @@ public class HeaderCompareAnalyzerProperties {
     this.compare = compareProperties;
   }
 
-  public static class HeaderCompareProperties {
+  public static class HeaderCompareProperties extends AnalyzerProperties{
     private String headerName1;
     private String headerName2;
     private HeaderCompareOperator operator;
-    private long weight;
-    private int order;
 
     public String getHeaderName1() {
       return headerName1;
@@ -44,22 +43,6 @@ public class HeaderCompareAnalyzerProperties {
 
     public void setOperator(HeaderCompareOperator operator) {
       this.operator = operator;
-    }
-
-    public long getWeight() {
-      return weight;
-    }
-
-    public void setWeight(long weight) {
-      this.weight = weight;
-    }
-
-    public int getOrder() {
-      return order;
-    }
-
-    public void setOrder(int order) {
-      this.order = order;
     }
 
     public static enum HeaderCompareOperator {

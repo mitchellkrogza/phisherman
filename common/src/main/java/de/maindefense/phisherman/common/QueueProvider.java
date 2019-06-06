@@ -5,23 +5,22 @@ import com.squareup.tape2.ObjectQueue;
 import com.squareup.tape2.ObjectQueue.Converter;
 import com.squareup.tape2.QueueFile;
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import javax.mail.MessagingException;
-import org.apache.commons.io.IOUtils;
 import org.springframework.core.env.Environment;
 
 public class QueueProvider {
 
   private final ObjectQueue<AnalyzingProgressModel> analyzerQueue;
   private final ObjectQueue<AnalyzingProgressModel> outputQueue;
-  private final ObjectMapper mapper = new ObjectMapper();
+  private final ObjectMapper mapper;
 
-  public QueueProvider(Environment env) throws IOException {
+  public QueueProvider(Environment env, ObjectMapper mapper) throws IOException {
+    this.mapper = mapper;
     Converter<AnalyzingProgressModel> converter = createConverter();
     analyzerQueue = ObjectQueue.create(buildQueueFile(env, "analyzer"), converter);
     outputQueue = ObjectQueue.create(buildQueueFile(env, "output"), converter);

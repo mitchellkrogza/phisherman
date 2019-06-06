@@ -1,12 +1,12 @@
 package de.maindefense.phisherman.analyzers;
 
-import javax.mail.Message;
+import javax.mail.internet.MimeMessage;
 
 public interface Analyzer {
 
   String getAnalyzerName();
 
-  long analyze(Message message);
+  long analyze(MimeMessage message);
 
   int getOrder();
 

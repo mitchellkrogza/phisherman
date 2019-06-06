@@ -10,7 +10,6 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.internet.MimeMessage;
-import org.apache.commons.io.IOUtils;
 
 public class AnalyzingProgressModel {
 
@@ -33,12 +32,12 @@ public class AnalyzingProgressModel {
     this.sourceInput = sourceInput;
   }
 
-  public void setOriginalMessage(Message originalMessage) {
-    this.originalMessage = originalMessage;
-  }
-
   public String getSourceInput() {
     return sourceInput;
+  }
+
+  public void setOriginalMessage(Message originalMessage) {
+    this.originalMessage = originalMessage;
   }
 
   public Message getOriginalMessage() {
@@ -53,12 +52,12 @@ public class AnalyzingProgressModel {
     return outputResults;
   }
 
-  public byte[] getOriginalMessageSerialized() {
-    return originalMessageSerialized;
-  }
-
   public void setOriginalMessageSerialized(byte[] originalMessageSerialized) {
     this.originalMessageSerialized = originalMessageSerialized;
+  }
+
+  public byte[] getOriginalMessageSerialized() {
+    return originalMessageSerialized;
   }
 
   public void serializeOriginalMessage() throws MessagingException, IOException {
@@ -66,9 +65,9 @@ public class AnalyzingProgressModel {
       return;
     }
 
-    try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-      originalMessage.writeTo(baos);
-      originalMessageSerialized = baos.toByteArray();
+    try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+      originalMessage.writeTo(os);
+      originalMessageSerialized = os.toByteArray();
       originalMessage = null;
     }
   }

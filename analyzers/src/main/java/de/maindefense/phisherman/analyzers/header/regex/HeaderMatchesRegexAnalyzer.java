@@ -6,8 +6,8 @@ import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +34,7 @@ public class HeaderMatchesRegexAnalyzer implements Analyzer {
   }
 
   @Override
-  public long analyze(Message message) {
+  public long analyze(MimeMessage message) {
     int result = 0;
 
     try {

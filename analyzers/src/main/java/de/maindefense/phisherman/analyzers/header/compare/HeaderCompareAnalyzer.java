@@ -3,8 +3,8 @@ package de.maindefense.phisherman.analyzers.header.compare;
 import de.maindefense.phisherman.analyzers.Analyzer;
 import de.maindefense.phisherman.analyzers.header.compare.HeaderCompareAnalyzerProperties.HeaderCompareProperties;
 import de.maindefense.phisherman.analyzers.header.compare.HeaderCompareAnalyzerProperties.HeaderCompareProperties.HeaderCompareOperator;
-import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +32,7 @@ public class HeaderCompareAnalyzer implements Analyzer {
   }
 
   @Override
-  public long analyze(Message message) {
+  public long analyze(MimeMessage message) {
     long result = 0;
 
     try {

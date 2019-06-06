@@ -1,12 +1,13 @@
 package de.maindefense.phisherman.analyzers.header.regex;
 
+import de.maindefense.phisherman.analyzers.config.AnalyzerProperties;
 import java.util.ArrayList;
 import java.util.List;
 
 public class HeaderMatchesRegexAnalyzerProperties {
-  
+
   private List<HeaderRegexProperties> regex = new ArrayList<>();
-  
+
   public List<HeaderRegexProperties> getRegex() {
     return regex;
   }
@@ -15,11 +16,9 @@ public class HeaderMatchesRegexAnalyzerProperties {
     this.regex = regex;
   }
 
-  public static class HeaderRegexProperties {
+  public static class HeaderRegexProperties extends AnalyzerProperties {
     private String headerName;
     private String pattern;
-    private long weight;
-    private int order;
 
     public String getHeaderName() {
       return headerName;
@@ -36,21 +35,5 @@ public class HeaderMatchesRegexAnalyzerProperties {
     public void setPattern(String pattern) {
       this.pattern = pattern;
     }
-
-    public long getWeight() {
-      return weight;
-    }
-
-    public void setWeight(long weight) {
-      this.weight = weight;
-    }
-
-    public int getOrder() {
-      return order;
-    }
-
-    public void setOrder(int order) {
-      this.order = order;
-    }  
-  }  
+  }
 }

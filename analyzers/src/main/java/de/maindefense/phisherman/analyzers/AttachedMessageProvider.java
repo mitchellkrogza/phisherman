@@ -23,9 +23,10 @@ public class AttachedMessageProvider {
 
   private static final Logger LOG = LoggerFactory.getLogger(AttachedMessageProvider.class);
 
-  public List<Message> getAttachedMessages(Message message) throws IOException, MessagingException {
+  public List<MimeMessage> getAttachedMessages(Message message)
+      throws IOException, MessagingException {
     Object content = message.getContent();
-    List<Message> attachedMessages = new ArrayList<>();
+    List<MimeMessage> attachedMessages = new ArrayList<>();
 
     if (content instanceof Multipart) {
       Multipart multipart = (Multipart) content;
@@ -34,10 +35,10 @@ public class AttachedMessageProvider {
         Object c = bodyPart.getContent();
 
         if (c instanceof MimeMessage) {
-          attachedMessages.add((Message) c);
+          attachedMessages.add((MimeMessage) c);
         } else if (c instanceof BASE64DecoderStream) {
           // outlook message
-          Message m = getOutlookMessage((BASE64DecoderStream) c);
+          MimeMessage m = getOutlookMessage((BASE64DecoderStream) c);
           attachedMessages.add(m);
           // other attachments
         } else if (Part.ATTACHMENT.equals(bodyPart.getDisposition())) {
@@ -54,7 +55,7 @@ public class AttachedMessageProvider {
     return attachedMessages;
   }
 
-  Message getOutlookMessage(InputStream is) {
+  MimeMessage getOutlookMessage(InputStream is) {
     return EmailConverter.outlookMsgToMimeMessage(is);
   }
 }

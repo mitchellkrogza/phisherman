@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +52,7 @@ public class AnalyzerChain {
   protected void analyzeAttachedMessagesRecursively(Message originalMessage,
       AnalyzingProgressModel model) {
     try {
-      List<Message> attachedMessages = attachedMessageProvider.getAttachedMessages(originalMessage);
+      List<MimeMessage> attachedMessages = attachedMessageProvider.getAttachedMessages(originalMessage);
       attachedMessages.forEach(attachedMessage -> {
         // if there is an attachedMessage, check it has recursively attached messages again
         analyzeAttachedMessagesRecursively(attachedMessage, model);
