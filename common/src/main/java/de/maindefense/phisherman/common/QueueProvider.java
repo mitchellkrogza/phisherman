@@ -11,9 +11,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import javax.mail.MessagingException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 
 public class QueueProvider {
+
+  private static final Logger LOG = LoggerFactory.getLogger(QueueProvider.class);
 
   private final ObjectQueue<AnalyzingProgressModel> analyzerQueue;
   private final ObjectQueue<AnalyzingProgressModel> outputQueue;
@@ -31,25 +35,22 @@ public class QueueProvider {
 
       @Override
       public void toStream(AnalyzingProgressModel value, OutputStream sink) throws IOException {
-        try(BufferedOutputStream os = new BufferedOutputStream(sink)){
+        try (BufferedOutputStream os = new BufferedOutputStream(sink)) {
           value.serializeOriginalMessage();
           mapper.writeValue(os, value);
         } catch (MessagingException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        }finally {
-          System.out.println("");
+          LOG.error("Error serializing AnalyzingProgressModel");
         }
       }
 
       @Override
       public AnalyzingProgressModel from(byte[] source) throws IOException {
-        AnalyzingProgressModel analyzingProgressModel = mapper.readValue(source, AnalyzingProgressModel.class);
+        AnalyzingProgressModel analyzingProgressModel =
+            mapper.readValue(source, AnalyzingProgressModel.class);
         try {
           analyzingProgressModel.deSerializeOriginalMessage();
         } catch (MessagingException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
+          LOG.error("Error deserializing AnalyzingProgressModel");
         }
         return analyzingProgressModel;
       }
